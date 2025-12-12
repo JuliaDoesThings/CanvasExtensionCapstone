@@ -4,40 +4,21 @@ var textBoxes = [];
 var buttonPos = 0;
 var buttonClicked = 0;
 
+var script = document.createElement('script');
+script.type = 'text/javascript';
+
+script.src = ""; //'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js';
+document.body.appendChild(script);
+
+const inputElement = document.getElementById("tinymce");
+
+
+//on load of website code
 window.onload = function() {
     //console.log(findType());
     WebPageType = findType();
     
 };
-
-window.onscroll = function() 
-{
-    questionCount = countToolbars();
-    if (WebPageType == "Quiz") 
-    {
-        if (questionCount != toolboxCount) 
-        {
-            processToolBars(WebPageType)
-        }
-    }
-
-    if (questionCount > textBoxes.length) 
-    {
-        textBoxes = [];
-        console.log(questionCount, " < ", textBoxes.length, " ran")
-        for (let i = 1; i <= questionCount + 1; i++)
-        {
-            //let frameId = `question_input_${i}_ifr`;
-            let frameId = "question_input_"
-            frameId = frameId.concat(i.toString());
-            frameId = frameId.concat("_ifr");
-            //console.log(frameId);
-            textBoxes.push(document.getElementById(frameId));
-            console.log(textBoxes);
-        }
-    }
-    
-}
 
 function findType() 
 {
@@ -75,6 +56,40 @@ function findType()
     }
 
     return pageType;
+}
+
+
+//on scroll code
+window.onscroll = function() 
+{
+    questionCount = countToolbars();
+    if (WebPageType == "Quiz") 
+    {
+        //logic gate to check if the code should run the button generation code
+        if (questionCount != toolboxCount) 
+        {
+            buttonPos = 0;
+            processToolBars(WebPageType)
+        }
+    }
+
+    //information generation code section of on-load
+    if (questionCount > textBoxes.length) 
+    {
+        textBoxes = [];
+        console.log(questionCount, " < ", textBoxes.length, " ran")
+        for (let i = 0; i < questionCount; i++)
+        {
+            //let frameId = `question_input_${i}_ifr`;
+            let frameId = "question_input_"
+            frameId = frameId.concat(i.toString());
+            frameId = frameId.concat("_ifr");
+            //console.log(frameId);
+            textBoxes.push(document.getElementById(frameId));
+        }
+        console.log(textBoxes);
+    }
+    
 }
 
 function countToolbars() 
@@ -125,11 +140,13 @@ function processToolBars(pageType)
 
 function checkForButton(toolbar) 
 {
-    var hasButton = toolbar.querySelector("#addedButton") != null;
+    var hasButton = toolbar.querySelector([id*="addedButton"]) != null;
     //console.log(toolbar + " status = " + hasButton)
     return hasButton
 }
 
+
+//button code - in charge of generating and adding the buttons
 function addButton(toolbar) 
 {
     let tabButton = document.createElement('button');
@@ -150,6 +167,8 @@ function addButton(toolbar)
     toolbar.appendChild(tabButton);
 }
 
+
+//tab code - runs on button click, handles adding the tab
 function tabClicked(e) 
 {
     e.preventDefault();
@@ -160,30 +179,19 @@ function tabClicked(e)
     return false;
 }
 
-
-console.log("here");
-var script = document.createElement('script');
-script.type = 'text/javascript';
-
-script.src = ""; //'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js';
-document.body.appendChild(script);
-
-const inputElement = document.getElementById("tinymce");
-
-//addEventListener("click", add_tab);
-
 function add_tab(buttonClicked){
 
     console.log(buttonClicked)
     let buttonIdParts = buttonClicked.id.split("_")
     let selectedQuestion = Number(buttonIdParts[1])
-    console.log(selectedQuestion)
+    console.log("ID = " + selectedQuestion)
   // console.log(tinymce.activeEditor.selection);
 
   // console.log(inputElement.selectionStart);
 
   //grab the location of the textbox and what is currently in it
     let selectedIframe = textBoxes[selectedQuestion];
+    console.log(selectedIframe);
     //console.log(selectedIframe);
 
   //console.log("found", document.getElementById("textentry_text_ifr"));
